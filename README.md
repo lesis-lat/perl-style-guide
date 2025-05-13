@@ -158,10 +158,10 @@ my %hash = (
 
 #### Contribution
 
-- Your contributions and suggestions are heartily ♥ welcome. [See here the contribution guidelines.](https://github.com/htrgouvea/perl-style-guide/blob/master/.github/CONTRIBUTING.md) Please, report bugs via [issues page.](https://github.com/htrgouvea/perl-style-guide/issues)  and for security issues see here the [security policy.](https://github.com/htrgouvea/perl-style-guide/blob/master/SECURITY.md) (✿ ◕‿◕) 
+- Your contributions and suggestions are heartily ♥ welcome. [See here the contribution guidelines.](https://github.com/lesis-lat/perl-style-guide/blob/master/.github/CONTRIBUTING.md) Please, report bugs via [issues page.](https://github.com/lesis-lat/perl-style-guide/issues)  and for security issues see here the [security policy.](https://github.com/lesis-lat/perl-style-guide/blob/master/SECURITY.md) (✿ ◕‿◕) 
 
 ---
 
 #### License
 
-- This work is licensed under [MIT License.](https://github.com/htrgouvea/perl-style-guide/blob/master/LICENSE.md)
+- This work is licensed under [MIT License.](https://github.com/lesis-lat/perl-style-guide/blob/master/LICENSE.md)
