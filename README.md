@@ -17,7 +17,9 @@ This paper is a fork of the paper written by [Eric Lorenzana](https://github.com
 
 #### Code layout
 
-- Avoid using comments: your code must be self explanatory, using comments proves that it is a confusing code.
+- Do not write any comments in the code. Your code must be self-explanatory without comments.
+
+- All code must be written in English, using clear, descriptive, and intuitive variable, function, and method names.
 
 - Make use of the "strict" and "warnings" modules in all your codes, they provided you:
     1. strict: It forces you to code properly to make your program less error-prone. For example: It forces you to declare variables before you use them. You can declare variable using “my” keyword. “my” keyword restricts the scope of the variable to local. It makes the code more readable and less error prone. If you don’t declare variable using my keyword then the created variable would be global, which you should avoid, reducing the scope of the variable to the place where it is needed is a good programming practice.
@@ -135,6 +137,60 @@ my $area = $pi * ($radius ^ 2);
 
 # Bad
 my $area = $pi*($radius^2);
+```
+
+- Always keep a space before and after the `->` operator.
+
+```perl
+my $name = $user->name;               # Bad
+my $name = $user ->name;              # Bad
+my $name = $user-> name;              # Bad
+my $name = $user -> name;             # Good
+```
+
+- Do not use ternary operators; use explicit control flow blocks instead.
+
+```perl
+# Bad
+my $status = $ok ? "ready" : "not ready";
+
+# Good
+my $status;
+if ($ok) {
+  $status = "ready";
+}
+if (!$ok) {
+  $status = "not ready";
+}
+```
+
+- Avoid using `else`; prefer early returns or separate conditional blocks.
+
+```perl
+# Bad
+if ($valid) {
+  return 1;
+} else {
+  return 0;
+}
+
+# Good
+if ($valid) {
+  return 1;
+}
+return 0;
+```
+
+- Do not use post-if conditions (e.g., `statement if condition`); always use explicit conditional blocks.
+
+```perl
+# Bad
+log_event($event) if $event;
+
+# Good
+if ($event) {
+  log_event($event);
+}
 ```
 
 - Associate hash key and values by using fat comma.
