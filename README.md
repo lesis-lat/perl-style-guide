@@ -17,7 +17,7 @@ This paper is a fork of the paper written by [Eric Lorenzana](https://github.com
 
 #### Code layout
 
-- Do not write any comments in the code. Your code must be self-explanatory without comments.
+- Do not write any comments in the code. Your code must be self-explanatory without comments. [See the comments section.](#comments)
 
 - All code must be written in English, using clear, descriptive, and intuitive variable, function, and method names.
 
@@ -33,6 +33,107 @@ This paper is a fork of the paper written by [Eric Lorenzana](https://github.com
 - Use four spaces per indentation level. The main advantage being that it provides a consistent and readable format, making it easier to maintain code quality. This level of indentation also helps in keeping lines within a reasonable length, promoting better readability.
 
 - Do not use tabs. It makes code difficult to browse in some hosts (where 8 spaces per tab is the standard) and only works when indenting by blocks.
+
+---
+
+#### Comments
+
+Comments are not tolerated. A comment is a confession that the code failed to explain itself, and the fix is always the code, never the comment. Code is verified by the interpreter and by your tests; comments are verified by nobody. They rot silently, drift away from what the code actually does, and eventually lie to the next person reading them.
+
+- Do not write comments. Rewrite the code until the comment is unnecessary.
+
+- Never restate what the code already says.
+
+```perl
+# Bad
+# increment the counter
+$counter = $counter + 1;
+
+# Good
+$counter = $counter + 1;
+```
+
+- When you feel the urge to explain a value, name the value.
+
+```perl
+# Bad
+# 86400 is the number of seconds in a day
+if ($elapsed > 86400) {
+  ...
+}
+
+# Good
+my $seconds_in_a_day = 86400;
+
+if ($elapsed > $seconds_in_a_day) {
+  ...
+}
+```
+
+- When you feel the urge to explain a block, extract it into a subroutine whose name is the explanation.
+
+```perl
+# Bad
+# check whether the user is allowed to read the report
+if ($user -> role eq "admin" || $user -> id == $report -> owner_id) {
+  ...
+}
+
+# Good
+if (user_can_read_report($user, $report)) {
+  ...
+}
+```
+
+- Never leave commented-out code behind. Delete it. Version control already remembers it, and dead code that looks alive is worse than no code at all.
+
+```perl
+# Bad
+# my $result = old_implementation($input);
+my $result = new_implementation($input);
+
+# Good
+my $result = new_implementation($input);
+```
+
+- Do not write banners, separators, author tags, dates, or changelogs in the source. All of this belongs to your version control system, where it stays accurate.
+
+```perl
+# Bad
+##########################################
+# Author: someone
+# Created: 2024-01-01
+# Changelog: fixed the parser
+##########################################
+```
+
+- Do not write `TODO`, `FIXME`, or `HACK` notes. Pending work belongs in your issue tracker, where it can be assigned, prioritized, and closed. A note buried in the source is work nobody agreed to do.
+
+- Do not explain a subroutine with a comment. If the name does not tell the whole story, the name is wrong or the subroutine does too much.
+
+```perl
+# Bad
+# returns the user name and, if missing, the email
+sub get_user {
+  ...
+}
+
+# Good
+sub user_name_or_email {
+  ...
+}
+```
+
+- If a piece of code needs justification, such as a workaround for an upstream bug or a deliberate deviation, that justification is history, not code. Write it in the commit message and in the issue that tracks it.
+
+- Note that shebang lines and compiler directives are not comments, even though they start with `#`. They are instructions, they are read by the machine, and they stay.
+
+```perl
+#!/usr/bin/env perl
+## no critic (ProhibitStringyEval)
+```
+
+- Note as well that POD is documentation, not commentary. A distributable module describes its public interface in POD, aimed at whoever consumes the module without reading the source. That is a contract for outsiders, and it never becomes an excuse to narrate the implementation from inside.
 
 ---
   
@@ -209,6 +310,84 @@ my %hash = (
               key3 => 'val3'
            );
 ```
+
+---
+
+#### Recommended modules
+
+- Use `Readonly` for constants and immutable values.
+
+```perl
+use Readonly;
+Readonly my $PI => 3.1415926;
+```
+
+- Use `English` to refer to Perl's built-in variables by name instead of by punctuation. Punctuation variables force the reader to keep a lookup table in their head, and this guide expects code to explain itself.
+
+```perl
+use English qw(-no_match_vars);
+```
+
+```perl
+# Bad
+print $0;
+print $!;
+print $^O;
+print $@;
+
+# Good
+print $PROGRAM_NAME;
+print $ERRNO;
+print $OSNAME;
+print $EVAL_ERROR;
+```
+
+- Always import it with `-no_match_vars`. Importing the match variables (`$MATCH`, `$PREMATCH`, `$POSTMATCH`) used to slow down every regular expression in the program, and while modern Perl no longer pays that cost, the explicit import states that you do not want them and keeps the intent unambiguous.
+
+---
+
+#### Dependencies
+
+- Declare every dependency in a `cpanfile` at the root of the project. A dependency that lives only in someone's shell history, in a README instruction, or in the memory of whoever set up the server is not a declared dependency.
+
+- Pin exact versions with `==`. A floating version means the code you ship is not the code you tested, and the day it breaks will be a day when nothing in your repository changed.
+
+```perl
+# Bad
+requires "Readonly";
+requires "Try::Tiny", ">= 0.30";
+
+# Good
+requires "Readonly", "== 2.05";
+requires "Try::Tiny", "== 0.31";
+```
+
+- Separate dependencies by phase, so that a production install does not drag in your test and profiling tools.
+
+```perl
+requires "Readonly", "== 2.05";
+requires "Try::Tiny", "== 0.31";
+
+on "test" => sub {
+  requires "Test::More", "== 1.302195";
+};
+
+on "develop" => sub {
+  requires "Devel::NYTProf", "== 6.14";
+};
+```
+
+- Commit both `cpanfile` and `cpanfile.snapshot`. Pinning your direct dependencies does not pin theirs, and the snapshot produced by `carton install` locks the whole resolved tree. Without it, "pinned" only describes the first level.
+
+- Install from the declaration, never by hand. `carton install` or `cpanm --installdeps .` guarantees that every machine builds the same tree from the same file. Anything installed manually exists on exactly one machine and disappears with it.
+
+---
+
+#### Performance tips
+
+##### Profiling
+
+- Profile your code with `Devel::NYTProf`.
 
 ---
 
